@@ -27,9 +27,9 @@ from firebase_admin import credentials, db as firebase_db
 #  🔧 ЗАМЕНИ НА СВОИ ДАННЫЕ
 # ══════════════════════════════════════════════════════════════
 
-BOT_TOKEN         = os.environ.get("BOT_TOKEN",       "ВАШ_ТОКЕН_БОТА")
-CHANNEL_ID        = os.environ.get("CHANNEL_ID",      "@ваш_канал")
-ADMIN_CHAT_IDS    = [int(x) for x in os.environ.get("ADMIN_IDS", "123456789").split(",")]
+BOT_TOKEN         = os.environ.get("BOT_TOKEN",       "8093735282:AAFYqcIowG_oaUfrb824n-YR1zPLf6fNN3M")
+CHANNEL_ID        = os.environ.get("CHANNEL_ID",      "@riderrank_feed")
+ADMIN_CHAT_IDS    = [int(x) for x in os.environ.get("ADMIN_IDS", "670309466").split(",")]
 FIREBASE_DB_URL   = os.environ.get("FIREBASE_DB_URL", "https://rider-80de6-default-rtdb.europe-west1.firebasedatabase.app")
 FIREBASE_KEY_FILE = os.environ.get("FIREBASE_KEY_FILE", "firebase-key.json")
 FIREBASE_KEY_JSON = os.environ.get("FIREBASE_KEY_JSON", "")  # для Railway
