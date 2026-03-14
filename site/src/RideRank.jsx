@@ -123,23 +123,23 @@ const CRITERIA = [
 ];
 
 const ACHIEVEMENTS = [
-  { id:"speed",  icon:"👹", title:"Форсаж без бюджета",   desc:"Вождение 5/5",      check: s => s.driving >= 5 },
-  { id:"dj",     icon:"🎧", title:"DJ от бога",           desc:"Музыка 5/5",        check: s => s.music >= 5 },
-  { id:"late",   icon:"🐌", title:"Ждали. Устали. Сели.", desc:"Пунктуальность ≤2", check: s => s.punctuality <= 2 },
-  { id:"clean",  icon:"🧼", title:"Операционная на колёсах", desc:"Чистота 5/5",    check: s => s.cleanliness >= 5 },
-  { id:"chess",  icon:"♟️", title:"Шашист 80-го уровня",  desc:"Шашки 5/5",         check: s => s.shashki >= 5 },
-  { id:"death",  icon:"💀", title:"Завещание писать?",    desc:"Безопасность ≤2",   check: s => s.safety <= 2 },
-  { id:"couch",  icon:"🛋️", title:"Диван бизнес-класса",  desc:"Комфорт 5/5",       check: s => s.comfort >= 5 },
-  { id:"legend", icon:"👑", title:"НЕДОСЯГАЕМЫЙ",         desc:"Всё на 5/5",        check: s => Object.values(s).every(v=>v>=5) },
+  { id:"speed",  icon:"👹", title:"Демон скорости",       desc:"Вождение 5/5",      check: s => s.driving >= 5 },
+  { id:"dj",     icon:"🎧", title:"Бог плейлистов",       desc:"Музыка 5/5",        check: s => s.music >= 5 },
+  { id:"late",   icon:"🐌", title:"Вечно опаздывает",     desc:"Пунктуальность ≤2", check: s => s.punctuality <= 2 },
+  { id:"clean",  icon:"🧼", title:"Чистюля",              desc:"Чистота 5/5",       check: s => s.cleanliness >= 5 },
+  { id:"chess",  icon:"♟️", title:"Мастер шашек",         desc:"Шашки 5/5",         check: s => s.shashki >= 5 },
+  { id:"death",  icon:"💀", title:"Опасный тип",          desc:"Безопасность ≤2",   check: s => s.safety <= 2 },
+  { id:"couch",  icon:"🛋️", title:"Комфорт-класс",        desc:"Комфорт 5/5",       check: s => s.comfort >= 5 },
+  { id:"legend", icon:"👑", title:"ЛЕГЕНДА",              desc:"Всё на 5/5",        check: s => Object.values(s).every(v=>v>=5) },
 ];
 
 const TITLES = [
-  { min:4.5, label:"👑 Неприкасаемый",     color:"#b8ff00" },
-  { min:4.0, label:"🔥 Жжёт асфальт",    color:"#7fff00" },
-  { min:3.5, label:"😎 Крепкий середняк", color:"#39ff14" },
-  { min:3.0, label:"🙂 Бывало и хуже",   color:"#a8ff00" },
-  { min:2.0, label:"😬 Пассажир плачет",  color:"#ff9500" },
-  { min:0,   label:"💀 Ходи пешком",      color:"#ff2d78" },
+  { min:4.5, label:"👑 Легенда дороги",  color:"#b8ff00" },
+  { min:4.0, label:"🔥 Огонь за рулём", color:"#7fff00" },
+  { min:3.5, label:"😎 Уверенный",      color:"#39ff14" },
+  { min:3.0, label:"🙂 Нормально",      color:"#a8ff00" },
+  { min:2.0, label:"😬 Так себе",       color:"#ff9500" },
+  { min:0,   label:"💀 Лучше пешком",   color:"#ff2d78" },
 ];
 
 function getTitle(a)   { return TITLES.find(t=>a>=t.min) || TITLES[TITLES.length-1]; }
@@ -501,17 +501,17 @@ function ReviewForm({ prefill, onSubmit, onClose, allDrivers }) {
 
         {step===1 && (
           <div>
-            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>Представься, герой</div>
-            <input style={inp} onFocus={onF} onBlur={onB} placeholder="Как тебя звать, критик?" value={reviewer} onChange={e=>setReviewer(e.target.value)} autoFocus/>
+            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>Кто оценивает?</div>
+            <input style={inp} onFocus={onF} onBlur={onB} placeholder="Твоё имя" value={reviewer} onChange={e=>setReviewer(e.target.value)} autoFocus/>
           </div>
         )}
 
         {step===2 && (
           <div>
-            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>Кого будем судить?</div>
+            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>О ком отзыв?</div>
             {allDrivers.length>0 && (
               <div style={{marginBottom:14}}>
-                <div style={{fontSize:10,color:"#2a4020",fontFamily:"monospace",marginBottom:8,textTransform:"uppercase",letterSpacing:2}}>Уже под наблюдением</div>
+                <div style={{fontSize:10,color:"#2a4020",fontFamily:"monospace",marginBottom:8,textTransform:"uppercase",letterSpacing:2}}>Выбери водителя</div>
                 <div style={{display:"flex",flexWrap:"wrap",gap:7}}>
                   {allDrivers.map(d=>{
                     const sel = makeKey(driverName)===d.id;
@@ -527,19 +527,19 @@ function ReviewForm({ prefill, onSubmit, onClose, allDrivers }) {
             )}
             <div style={{marginBottom:11}}>
               <input style={{...inp,marginBottom:0,borderColor:nameHint?"rgba(57,255,20,0.5)":"rgba(57,255,20,0.15)"}} onFocus={onF} onBlur={onB}
-                placeholder="Имя жертвы (Дима, Димас, Дмитрий...)" value={driverName} onChange={e=>setDriverName(e.target.value)}/>
+                placeholder="Имя водителя (Дима, Димас, Дмитрий...)" value={driverName} onChange={e=>setDriverName(e.target.value)}/>
               {nameHint
                 ? <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {nameHint}</div>
-                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Хоть Димон, хоть Димас — мы найдём его досье</div>}
+                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Дима, Димас, Дмитрий — объединяем в один профиль</div>}
             </div>
             <div style={{marginBottom:11}}>
               <input style={{...inp,marginBottom:0,borderColor:carHint?"rgba(57,255,20,0.5)":"rgba(57,255,20,0.15)"}} onFocus={onF} onBlur={onB}
-                placeholder="На чём рассекает? (Бумер, Приора, Тесла...)" value={driverCar} onChange={e=>setDriverCar(e.target.value)}/>
+                placeholder="Марка авто (БМВ, Бумер, BMW M3...)" value={driverCar} onChange={e=>setDriverCar(e.target.value)}/>
               {carHint
                 ? <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {carHint}</div>
-                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Бумер он и в Африке BMW — не запутаем</div>}
+                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Бумер, БМВ, BMW — распознаём автоматически</div>}
             </div>
-            <input style={inp} onFocus={onF} onBlur={onB} placeholder="Откуда-куда катались (можно не писать)" value={route} onChange={e=>setRoute(e.target.value)}/>
+            <input style={inp} onFocus={onF} onBlur={onB} placeholder="Маршрут (необязательно)" value={route} onChange={e=>setRoute(e.target.value)}/>
           </div>
         )}
 
@@ -562,9 +562,9 @@ function ReviewForm({ prefill, onSubmit, onClose, allDrivers }) {
 
         {step===4 && (
           <div>
-            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>Последнее слово</div>
+            <div style={{fontSize:13,color:"#4a6040",fontFamily:"monospace",marginBottom:14,letterSpacing:1,textTransform:"uppercase"}}>Комментарий</div>
             <textarea style={{...inp,height:120,resize:"none",lineHeight:1.7}} onFocus={onF} onBlur={onB}
-              placeholder="Излей душу. Мы никому не скажем... наверное" value={comment} onChange={e=>setComment(e.target.value)}/>
+              placeholder="Расскажи о поездке (необязательно)" value={comment} onChange={e=>setComment(e.target.value)}/>
           </div>
         )}
 
@@ -717,8 +717,8 @@ export default function RideRank() {
 
         <Reveal delay={0.2}>
           <p style={{fontSize:18,color:"#4a6040",maxWidth:500,lineHeight:1.6,marginBottom:48,fontWeight:300}}>
-            Здесь каждая поездка оставляет след.<br/>
-            <span style={{color:"#39ff14",fontWeight:600}}>Анонимно. Честно. Без шансов отмазаться.</span>
+            Рейтинг водителей твоей компании.<br/>
+            <span style={{color:"#39ff14",fontWeight:600}}>Честно. Анонимно. Беспощадно.</span>
           </p>
         </Reveal>
 
@@ -792,7 +792,7 @@ export default function RideRank() {
         {tab==="feed" && (
           <div>
             {reviews.length===0
-              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🚗</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",lineHeight:2,textTransform:"uppercase",letterSpacing:1}}>Тишина на дороге...<br/>Стань первым, кто нарушит молчание</div></div></Reveal>
+              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🚗</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",lineHeight:2,textTransform:"uppercase",letterSpacing:1}}>Пока пусто<br/>Добавь первый отзыв</div></div></Reveal>
               : sortedReviews.slice(0,25).map((r,i)=>{
                   const d = drivers[r.driverId]; if(!d) return null;
                   const avg = calcAvg(r.scores); const t = getTitle(avg);
@@ -833,12 +833,12 @@ export default function RideRank() {
         {tab==="rating" && (
           <div>
             {sorted.length===0
-              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🏆</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:1,lineHeight:2}}>Трон пустует<br/>Кто-то должен сесть первым</div></div></Reveal>
+              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🏆</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:1,lineHeight:2}}>Рейтинг пока пуст<br/>Будь первым</div></div></Reveal>
               : <>
                   {/* TOP-1 hero card */}
                   <Reveal>
                     <div style={{marginBottom:28}}>
-                      <div style={{fontSize:10,color:"#39ff14",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:3,marginBottom:12,animation:"glow 2s ease-in-out infinite"}}>● Альфа-водитель</div>
+                      <div style={{fontSize:10,color:"#39ff14",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:3,marginBottom:12,animation:"glow 2s ease-in-out infinite"}}>● Лидер рейтинга</div>
                       <div onClick={()=>setSelDriver(sorted[0])}
                         onMouseEnter={e=>{e.currentTarget.style.transform="translateY(-4px)";e.currentTarget.style.boxShadow="0 20px 60px #39ff1420";}}
                         onMouseLeave={e=>{e.currentTarget.style.transform="";e.currentTarget.style.boxShadow="0 0 40px #39ff1415";}}
@@ -860,7 +860,7 @@ export default function RideRank() {
                     </div>
                   </Reveal>
 
-                  <div style={{fontSize:10,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:3,marginBottom:12}}>Остальные смертные</div>
+                  <div style={{fontSize:10,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:3,marginBottom:12}}>Все водители</div>
                   {sorted.map((d,i)=>{
                     const t = getTitle(d.average);
                     const achs = getAchs(getStats(reviews.filter(r=>r.driverId===d.id)));
@@ -895,7 +895,7 @@ export default function RideRank() {
         {tab==="drivers" && (
           <div>
             {sorted.length===0
-              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🚗</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:1,lineHeight:2}}>Ни одного подозреваемого<br/>Добавь первого водителя</div></div></Reveal>
+              ? <Reveal><div style={{textAlign:"center",padding:"80px 20px"}}><div style={{fontSize:64,marginBottom:20,animation:"float 3s ease-in-out infinite"}}>🚗</div><div style={{fontSize:14,color:"#2a4020",fontFamily:"monospace",textTransform:"uppercase",letterSpacing:1,lineHeight:2}}>Водителей пока нет<br/>Добавь первого</div></div></Reveal>
               : <div style={{display:"grid",gridTemplateColumns:"repeat(auto-fill,minmax(300px,1fr))",gap:14}}>
                   {sorted.map((d,i)=>{
                     const dr = reviews.filter(r=>r.driverId===d.id);
@@ -942,7 +942,7 @@ export default function RideRank() {
           +
         </button>
         <div className="fab-hint" style={{opacity:0,transition:"opacity 0.2s",background:"rgba(0,0,0,0.85)",border:"1px solid rgba(57,255,20,0.3)",borderRadius:10,padding:"6px 12px",fontSize:11,fontFamily:"monospace",color:"#39ff14",whiteSpace:"nowrap",pointerEvents:"none"}}>
-          Пора кого-то оценить
+          Добавить отзыв
         </div>
       </div>
 
