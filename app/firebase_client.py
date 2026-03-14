@@ -10,7 +10,7 @@ import os
 import firebase_admin
 from firebase_admin import credentials, db as fdb
 
-from app.config import FIREBASE_DB_URL, FIREBASE_KEY_B64
+from app.config import FIREBASE_DB_URL, FIREBASE_KEY_B64, FIREBASE_KEY_JSON
 
 logger = logging.getLogger(__name__)
 
@@ -19,8 +19,12 @@ def init() -> None:
     if firebase_admin._apps:
         return
 
-    if FIREBASE_KEY_B64:
-        raw = base64.b64decode(FIREBASE_KEY_B64).decode("utf-8")
+    if FIREBASE_KEY_JSON:
+        key_dict = json.loads(FIREBASE_KEY_JSON)
+        cred = credentials.Certificate(key_dict)
+        logger.info("Firebase: key from FIREBASE_KEY_JSON")
+    elif FIREBASE_KEY_B64:
+        raw = base64.b64decode(FIREBASE_KEY_B64.strip()).decode("utf-8")
         key_dict = json.loads(raw)
         cred = credentials.Certificate(key_dict)
         logger.info("Firebase: key from FIREBASE_KEY_B64")
