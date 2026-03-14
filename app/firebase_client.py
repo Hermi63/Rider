@@ -22,8 +22,6 @@ def init() -> None:
     if FIREBASE_KEY_B64:
         raw = base64.b64decode(FIREBASE_KEY_B64).decode("utf-8")
         key_dict = json.loads(raw)
-        if "private_key" in key_dict:
-            key_dict["private_key"] = key_dict["private_key"].replace("\\n", "\n")
         cred = credentials.Certificate(key_dict)
         logger.info("Firebase: key from FIREBASE_KEY_B64")
     elif os.path.exists("firebase-key.json"):
