@@ -1,5 +1,6 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, PolarRadiusAxis } from "recharts";
+import { subscribeData, addReview as fbAddReview, deleteReview as fbDeleteReview, banUser as fbBanUser, unbanUser as fbUnbanUser } from "./firebase";
 
 // ══════════════════════════════════════════════════════════════
 //  RIDE RANK — Preview версия (localStorage)
@@ -583,7 +584,8 @@ function ReviewForm({ prefill, onSubmit, onClose, allDrivers }) {
 // ── MAIN APP ──────────────────────────────────────────────────
 export default function RideRank() {
   const [tab, setTab]             = useState("feed");
-  const [data, setData]           = useState(loadData);
+  const [data, setData]           = useState({ reviews:[], drivers:{}, banned:{} });
+  const [loading, setLoading]     = useState(true);
   const [showForm, setShowForm]   = useState(false);
   const [selDriver, setSelDriver] = useState(null);
   const [prefill, setPrefill]     = useState(null);
@@ -597,40 +599,47 @@ export default function RideRank() {
   const { reviews, drivers, banned } = data;
 
   useEffect(()=>{
+    const unsub = subscribeData(d => { setData(d); setLoading(false); });
+    return unsub;
+  },[]);
+
+  useEffect(()=>{
     const onScroll = ()=>setScrollY(window.scrollY);
     window.addEventListener("scroll", onScroll, {passive:true});
     return ()=>window.removeEventListener("scroll", onScroll);
   },[]);
 
-  // Проверяем бан текущего пользователя
   const storedName = typeof localStorage!=="undefined" ? (localStorage.getItem("rr_myname")||"") : "";
   const myBanKey = storedName.toLowerCase().replace(/\s+/g,"_");
   if(storedName && banned[myBanKey]) return <BannedScreen/>;
 
-  function persist(next) { setData(next); saveData(next); }
   function showToast(m, err=false) { setToast({m,err}); setTimeout(()=>setToast(null),3000); }
 
-  function handleReview({reviewer,driverName,driverNameNorm,driverCar,route,scores,comment,date,timestamp}) {
+  async function handleReview({reviewer,driverName,driverNameNorm,driverCar,route,scores,comment,date,timestamp}) {
     const rKey = reviewer.toLowerCase().replace(/\s+/g,"_");
     if(banned[rKey]) { showToast("🚫 Вы заблокированы",true); return; }
     const dKey = driverNameNorm.replace(/\s+/g,"_");
-    const id   = `r_${Date.now()}`;
     const existing = drivers[dKey];
-    const nextDrivers = existing ? drivers : { ...drivers, [dKey]:{ id:dKey, displayName:driverName, displayCar:driverCar }};
-    const nextReviews = [...reviews, {id, driverId:dKey, reviewer, scores, comment, route, date, timestamp}];
-    if(typeof localStorage!=="undefined") localStorage.setItem("rr_myname", reviewer);
-    persist({ reviews:nextReviews, drivers:nextDrivers, banned });
-    setShowForm(false); setSelDriver(null);
-    showToast(existing ? `🔥 Добавлено к профилю ${existing.displayName}!` : "✅ Отзыв опубликован!");
+    try {
+      await fbAddReview(
+        { driverId:dKey, reviewer, scores, comment, route, date, timestamp },
+        dKey,
+        { id:dKey, displayName:driverName, displayCar:driverCar }
+      );
+      if(typeof localStorage!=="undefined") localStorage.setItem("rr_myname", reviewer);
+      setShowForm(false); setSelDriver(null);
+      showToast(existing ? `🔥 Добавлено к профилю ${existing.displayName}!` : "✅ Отзыв опубликован!");
+    } catch(e) { showToast("Ошибка: "+e.message, true); }
   }
 
-  function handleDelete(reviewId) {
-    persist({ reviews:reviews.filter(r=>r.id!==reviewId), drivers, banned });
-    showToast("🗑 Отзыв удалён");
+  async function handleDelete(reviewId) {
+    try {
+      await fbDeleteReview(reviewId);
+      showToast("🗑 Отзыв удалён");
+    } catch(e) { showToast("Ошибка: "+e.message, true); }
   }
 
-  function handleBan(name) {
-    // 🛡 Защита от самобана
+  async function handleBan(name) {
     if(name.toLowerCase() === storedName.toLowerCase()) {
       showToast("🛡 Нельзя забанить самого себя!", true); return;
     }
@@ -638,18 +647,28 @@ export default function RideRank() {
       showToast("🛡 Нельзя забанить модератора!", true); return;
     }
     const key = name.toLowerCase().replace(/\s+/g,"_");
-    const nextReviews = reviews.filter(r=>r.reviewer?.toLowerCase()!==name.toLowerCase());
-    const nextBanned  = {...banned, [key]:name};
-    persist({ reviews:nextReviews, drivers, banned:nextBanned });
-    showToast(`🚫 ${name} заблокирован`,true);
+    try {
+      await fbBanUser(name, key);
+      for(const r of reviews) {
+        if(r.reviewer?.toLowerCase()===name.toLowerCase()) await fbDeleteReview(r.id);
+      }
+      showToast(`🚫 ${name} заблокирован`,true);
+    } catch(e) { showToast("Ошибка: "+e.message, true); }
   }
 
-  function handleUnban(name) {
+  async function handleUnban(name) {
     const key = name.toLowerCase().replace(/\s+/g,"_");
-    const {[key]:_, ...rest} = banned;
-    persist({ reviews, drivers, banned:rest });
-    showToast(`✅ ${name} разблокирован`);
+    try {
+      await fbUnbanUser(key);
+      showToast(`✅ ${name} разблокирован`);
+    } catch(e) { showToast("Ошибка: "+e.message, true); }
   }
+
+  if(loading) return (
+    <div style={{minHeight:"100vh",background:"#030603",display:"flex",alignItems:"center",justifyContent:"center"}}>
+      <div style={{color:"#39ff14",fontFamily:"monospace",fontSize:14,animation:"pulse 1.5s infinite"}}>Загрузка...</div>
+    </div>
+  );
 
   const sorted = Object.values(drivers).map(d=>{
     const dr = reviews.filter(r=>r.driverId===d.id);
