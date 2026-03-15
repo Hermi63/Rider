@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import { getDatabase, ref, get, set, push, remove, onValue } from "firebase/database";
 
 const firebaseConfig = {
+  apiKey: "AIzaSyBJ66U42_CCdTQv7qprWva3NXWrWhsPG0g",
   projectId: "rider-11e62",
   databaseURL: "https://rider-11e62-default-rtdb.europe-west1.firebasedatabase.app",
 };
