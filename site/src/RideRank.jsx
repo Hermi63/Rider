@@ -528,17 +528,13 @@ function ReviewForm({ prefill, onSubmit, onClose, allDrivers }) {
             )}
             <div style={{marginBottom:11}}>
               <input style={{...inp,marginBottom:0,borderColor:nameHint?"rgba(57,255,20,0.5)":"rgba(57,255,20,0.15)"}} onFocus={onF} onBlur={onB}
-                placeholder="Имя водителя (Дима, Димас, Дмитрий...)" value={driverName} onChange={e=>setDriverName(e.target.value)}/>
-              {nameHint
-                ? <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {nameHint}</div>
-                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Дима, Димас, Дмитрий — объединяем в один профиль</div>}
+                placeholder="Имя водителя" value={driverName} onChange={e=>setDriverName(e.target.value)}/>
+              {nameHint && <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {nameHint}</div>}
             </div>
             <div style={{marginBottom:11}}>
               <input style={{...inp,marginBottom:0,borderColor:carHint?"rgba(57,255,20,0.5)":"rgba(57,255,20,0.15)"}} onFocus={onF} onBlur={onB}
-                placeholder="Марка авто (БМВ, Бумер, BMW M3...)" value={driverCar} onChange={e=>setDriverCar(e.target.value)}/>
-              {carHint
-                ? <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {carHint}</div>
-                : <div style={{fontSize:11,fontFamily:"monospace",color:"#2a4020",marginTop:4}}>Бумер, БМВ, BMW — распознаём автоматически</div>}
+                placeholder="Марка авто" value={driverCar} onChange={e=>setDriverCar(e.target.value)}/>
+              {carHint && <div style={{fontSize:11,fontFamily:"monospace",color:"#39ff14",marginTop:4,padding:"4px 10px",background:"rgba(57,255,20,0.08)",borderRadius:8}}>✓ {carHint}</div>}
             </div>
             <input style={inp} onFocus={onF} onBlur={onB} placeholder="Маршрут (необязательно)" value={route} onChange={e=>setRoute(e.target.value)}/>
           </div>
